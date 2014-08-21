@@ -26,6 +26,19 @@
             :body ["/things/thingy" "/things/thingy2"]
           }
         }
+
+        :post {
+          :doc "Create a thing"
+          :req {
+            :headers {"Authorization" "psv+Bearer token"}
+            :body {"description" "psv+description"}
+          }
+          :rsp {
+            :success-code 201
+            :status 201
+            :headers {"Location" "/things/1"}
+          }
+        }
       }
 
       "things/*" {
@@ -36,6 +49,24 @@
             :gen {"things/psv+" {:type "Int"}}
           }
           :rsp {:success-code 200 :content-type "text/plain" :body "/things/thingy"}
+        }
+
+        :put {
+          :doc "Edit a thing with an id *"
+          :req {
+            :headers {"Authorization" "psv+Bearer token"}
+            :gen {"things/psv+" {:type "Int"}}
+          }
+          :rsp {:success-code 204}
+        }
+
+        :delete {
+          :doc "Delete a tihng with an id *"
+          :req {
+            :headers {"Authorization" "psv+Bearer token"}
+            :gen {"things/psv+" {:type "Int"}}
+          }
+          :rsp {:success-code 204}
         }
       }
     }
