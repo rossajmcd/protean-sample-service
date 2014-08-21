@@ -51,6 +51,8 @@
 (defn store-edit-thing [store id description]
   (swap! thingstore assoc id description))
 
+(defn store-delete-thing [store id] (swap! thingstore dissoc id))
+
 
 ;; =============================================================================
 ;; Service (API)
@@ -73,6 +75,7 @@
   (store-create-thing store description))
 (defn thing-edit [{:keys [store]} id description]
   (store-edit-thing store id description))
+(defn thing-delete [{:keys [store]} id] (store-delete-thing store id))
 
 
 ;; =============================================================================
@@ -96,14 +99,17 @@
 (defn thing-edit-rsp [service {:keys [params] :as req}]
   (let [desc (jsn/parse-string (slurp (:body req)))]
     (default-rsp (thing-edit service (int-> (:id params)) (desc "description")))))
+(defn thing-delete-rsp [service {:keys [params]}]
+  (default-rsp (thing-delete service (int-> (:id params)))))
 
 (defn myroutes [service]
   (routes
-    (GET  "/sampleservice/things/token" []  (token-rsp service))
-    (GET  "/sampleservice/things"       []  (things-rsp service))
-    (GET  "/sampleservice/things/:id"   req (things-*-rsp service req))
-    (POST "/sampleservice/things"       req (thing-create-rsp service req))
-    (PUT  "/sampleservice/things/:id"   req (thing-edit-rsp service req))))
+    (GET    "/sampleservice/things/token" []  (token-rsp service))
+    (GET    "/sampleservice/things"       []  (things-rsp service))
+    (GET    "/sampleservice/things/:id"   req (things-*-rsp service req))
+    (POST   "/sampleservice/things"       req (thing-create-rsp service req))
+    (PUT    "/sampleservice/things/:id"   req (thing-edit-rsp service req))
+    (DELETE "/sampleservice/things/:id"   req (thing-delete-rsp service req))))
 
 (defrecord Server [port]
   component/Lifecycle
