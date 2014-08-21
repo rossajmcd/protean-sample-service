@@ -1,0 +1,43 @@
+;; Protean integration test reference codex
+;;
+;; Models a simple RESTful API for simulation,
+;; simulation testing and integration testing.
+
+{
+  :sampleservice {
+    :paths {
+      "token" {
+        :get {
+          :doc "Get an auth token"
+          :rsp {
+            :success-code 200
+            :body-res "access_token"
+            :body {"access_token" "mytoken" "token_type" "bearer"}
+          }
+        }
+      }
+
+      "things" {
+        :get {
+          :doc "Get things"
+          :req {:headers {"Authorization" "psv+Bearer token"}}
+          :rsp {
+            :success-code 200
+            :body ["/things/thingy" "/things/thingy2"]
+          }
+        }
+      }
+
+      "things/*" {
+        :get {
+          :doc "Get a thing with an id *"
+          :req {
+            :headers {"Authorization" "psv+Bearer token"}
+            :gen {"things/psv+" {:type "Int"}}
+          }
+          :rsp {:success-code 200 :content-type "text/plain" :body "/things/thingy"}
+        }
+      }
+    }
+  }
+}
