@@ -104,12 +104,12 @@
 
 (defn myroutes [service]
   (routes
-    (GET    "/sampleservice/things/token" []  (token-rsp service))
-    (GET    "/sampleservice/things"       []  (things-rsp service))
-    (GET    "/sampleservice/things/:id"   req (things-*-rsp service req))
-    (POST   "/sampleservice/things"       req (thing-create-rsp service req))
-    (PUT    "/sampleservice/things/:id"   req (thing-edit-rsp service req))
-    (DELETE "/sampleservice/things/:id"   req (thing-delete-rsp service req))))
+    (GET    "/sampleservice/token"      []  (token-rsp service))
+    (GET    "/sampleservice/things"     []  (things-rsp service))
+    (GET    "/sampleservice/things/:id" req (things-*-rsp service req))
+    (POST   "/sampleservice/things"     req (thing-create-rsp service req))
+    (PUT    "/sampleservice/things/:id" req (thing-edit-rsp service req))
+    (DELETE "/sampleservice/things/:id" req (thing-delete-rsp service req))))
 
 (defrecord Server [port]
   component/Lifecycle
