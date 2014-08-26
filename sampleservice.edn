@@ -55,6 +55,7 @@
           :doc "Edit a thing with an id *"
           :req {
             :headers {"Authorization" "psv+Bearer token"}
+            :body {"description" "psv+description"}
             :gen {"things/psv+" {:type "Int"}}
           }
           :rsp {:success-code 204}
