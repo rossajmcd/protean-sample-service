@@ -62,7 +62,7 @@
         }
 
         :delete {
-          :doc "Delete a tihng with an id *"
+          :doc "Delete a thing with an id *"
           :req {
             :headers {"Authorization" "psv+Bearer token"}
             :gen {"things/psv+" {:type "Int"}}
