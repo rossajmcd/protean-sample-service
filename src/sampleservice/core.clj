@@ -49,9 +49,14 @@
     (swap! thingstore assoc k description)))
 
 (defn store-edit-thing [store id description]
-  (swap! thingstore assoc id description))
+  (if (@thingstore id)
+    (swap! thingstore assoc id description)
+    nil))
 
-(defn store-delete-thing [store id] (swap! thingstore dissoc id))
+(defn store-delete-thing [store id]
+  (if (@thingstore id)
+    (swap! thingstore dissoc id)
+    nil))
 
 
 ;; =============================================================================
@@ -88,18 +93,22 @@
         rs (assoc rsp :status s)]
     (if body (assoc rs :body (jsn/generate-string body)) rs)))
 
-(defn token-rsp [service] (default-rsp (token service)))
+(defn token-rsp [service] (println "token get") (default-rsp (token service)))
 
-(defn things-rsp [service] (default-rsp (things service)))
+(defn things-rsp [service] (println "things get") (default-rsp (things service)))
 (defn things-*-rsp [service {:keys [params]}]
+  (println "thing wildcard get")
   (default-rsp (things-* service (int-> (:id params)))))
 (defn thing-create-rsp [service req]
+  (println "things post")
   (let [desc (jsn/parse-string (slurp (:body req)))]
     (default-rsp (thing-create service (desc "description")))))
 (defn thing-edit-rsp [service {:keys [params] :as req}]
+  (println "thing edit")
   (let [desc (jsn/parse-string (slurp (:body req)))]
     (default-rsp (thing-edit service (int-> (:id params)) (desc "description")))))
 (defn thing-delete-rsp [service {:keys [params]}]
+  (println "thing delete")
   (default-rsp (thing-delete service (int-> (:id params)))))
 
 (defn myroutes [service]
