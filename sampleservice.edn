@@ -19,11 +19,11 @@
 
       "things" {
         :get {
-          :doc "Get things"
+          :doc "Get things or a thing via filter/query"
           :req {:headers {"Authorization" "psv+Bearer token"}}
           :rsp {
             :success-code 200
-            :body ["/things/thingy" "/things/thingy2"]
+            :body ["thingy" "thingy2"]
           }
         }
 
@@ -49,7 +49,7 @@
             :headers {"Authorization" "psv+Bearer token"}
             :gen {"things/psv+" {:type "Int"}}
           }
-          :rsp {:success-code 200 :content-type "text/plain" :body "/things/thingy"}
+          :rsp {:success-code 200 :content-type "text/plain" :body "thingy"}
         }
 
         :put {
