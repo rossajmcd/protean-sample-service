@@ -38,19 +38,24 @@
 
 (defn store [host port] (map->Store {:host host :port port}))
 
-(def thingstore (atom {(int 1) "/things/thingy" (int 2) "/things/thingy2"}))
+(def thingstore
+  (atom {(int 1) {:lookup (int 1) :description "thingy"}
+         (int 2) {:lookup (int 2) :description "thingy2"}}))
 
-(defn store-things [store] (vals @thingstore))
+(defn store-things [store] (map #(:description %) (vals @thingstore)))
 
-(defn store-thing [store id] (@thingstore id))
+(defn store-thing [store id] (:description (@thingstore id)))
+
+(defn store-thing-by-lookup [store lookup]
+  (:description (first (filter #(= (:lookup %) lookup) (vals @thingstore)))))
 
 (defn store-create-thing [store description]
   (let [k (int (inc (apply max (keys @thingstore))))]
-    (swap! thingstore assoc k description)))
+    (swap! thingstore assoc k {:lookup k :description description})))
 
 (defn store-edit-thing [store id description]
   (if (@thingstore id)
-    (swap! thingstore assoc id description)
+    (swap! thingstore assoc-in [id :description] description)
     nil))
 
 (defn store-delete-thing [store id]
@@ -75,7 +80,8 @@
 (defn token [{:keys [store]}] {"access_token" "mytoken" "token_type" "bearer"})
 
 (defn things [{:keys [store]}] (store-things store))
-(defn things-* [{:keys [store]} id] (store-thing store id))
+(defn thing-* [{:keys [store]} id] (store-thing store id))
+(defn thing-by-lookup [{:keys [store]} lookup] (store-thing-by-lookup store lookup))
 (defn thing-create [{:keys [store]} description]
   (store-create-thing store description))
 (defn thing-edit [{:keys [store]} id description]
@@ -95,18 +101,28 @@
 
 (defn token-rsp [service] (println "token get") (default-rsp (token service)))
 
-(defn things-rsp [service] (println "things get") (default-rsp (things service)))
-(defn things-*-rsp [service {:keys [params]}]
+(defn things-rsp
+  "Get all things or lookup a thing with a request parameter."
+  [service {:keys [params]}]
+  (println "things get all or with request param filter")
+  (if (empty? params)
+    (default-rsp (things service))
+    (default-rsp (thing-by-lookup service (int-> (:lookup params))))))
+
+(defn thing-*-rsp [service {:keys [params]}]
   (println "thing wildcard get")
-  (default-rsp (things-* service (int-> (:id params)))))
+  (default-rsp (thing-* service (int-> (:id params)))))
+
 (defn thing-create-rsp [service req]
   (println "things post")
   (let [desc (jsn/parse-string (slurp (:body req)))]
     (default-rsp (thing-create service (desc "description")))))
+
 (defn thing-edit-rsp [service {:keys [params] :as req}]
   (println "thing edit")
   (let [desc (jsn/parse-string (slurp (:body req)))]
     (default-rsp (thing-edit service (int-> (:id params)) (desc "description")))))
+
 (defn thing-delete-rsp [service {:keys [params]}]
   (println "thing delete")
   (default-rsp (thing-delete service (int-> (:id params)))))
@@ -114,8 +130,8 @@
 (defn myroutes [service]
   (routes
     (GET    "/sampleservice/token"      []  (token-rsp service))
-    (GET    "/sampleservice/things"     []  (things-rsp service))
-    (GET    "/sampleservice/things/:id" req (things-*-rsp service req))
+    (GET    "/sampleservice/things"     req (things-rsp service req))
+    (GET    "/sampleservice/things/:id" req (thing-*-rsp service req))
     (POST   "/sampleservice/things"     req (thing-create-rsp service req))
     (PUT    "/sampleservice/things/:id" req (thing-edit-rsp service req))
     (DELETE "/sampleservice/things/:id" req (thing-delete-rsp service req))))
