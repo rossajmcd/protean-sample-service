@@ -47,7 +47,8 @@
 (defn store-thing [store id] (:description (@thingstore id)))
 
 (defn store-thing-by-lookup [store lookup]
-  (:description (first (filter #(= (:lookup %) lookup) (vals @thingstore)))))
+  (conj '()
+    (:description (first (filter #(= (:lookup %) lookup) (vals @thingstore))))))
 
 (defn store-create-thing [store description]
   (let [k (int (inc (apply max (keys @thingstore))))]
