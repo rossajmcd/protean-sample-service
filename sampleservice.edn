@@ -19,10 +19,17 @@
 
       "things" {
         :get {
-          :doc "Get things or a thing via filter/query"
-          :req {:headers {"Authorization" "psv+Bearer token"}}
+          :doc "Get thing(s) via optional filter/query request parameter"
+          :req {
+            :headers {"Authorization" "psv+Bearer token"}
+            :query-params {:optional {"lookup" "psv+lookup"}}
+            ;; the below is optional [standard|json] - defaults to standard
+            ;;:query-params-type :standard
+            :gen {"lookup" {:type "Int"}}
+          }
           :rsp {
             :success-code 200
+            ; N.B. here we simulate the all things response types
             :body ["thingy" "thingy2"]
           }
         }
@@ -38,6 +45,24 @@
             :success-code 201
             :status 201
             :headers {"Location" "/things/1"}
+          }
+        }
+      }
+
+      "things-standard-query-param" {
+        :get {
+          :doc "Get things via mandatory standard request parameter"
+          :req {
+            :headers {"Authorization" "psv+Bearer token"}
+            :query-params {:required {"lookup" "psv+lookup"}}
+            ;; the below is optional [standard|json] - defaults to standard
+            ;;:query-params-type :standard
+            :gen {"lookup" {:type "Int"}}
+          }
+          :rsp {
+            :success-code 200
+            ; N.B. here we simulate the all things response types
+            :body ["thingy" "thingy2"]
           }
         }
       }
@@ -71,6 +96,22 @@
           :rsp {:success-code 204}
         }
       }
+
+      ; ;demonstrates a json query parameter (diverse API)
+      ; ;curl -i http://host:port/path/hubs?q='\{"hmac":"AAAAAA"\}'
+      ; "complexthings" {
+      ;   :get {
+      ;     :doc "Get complexthings all or filter restricted by query param"
+      ;     :req {
+      ;       :headers {"Authorization" "psv+Bearer token"}
+      ;       :rsp {
+      ;         :success-code 200
+      ;         ; N.B. here we simulate the all complexthings response types
+      ;         :body ["complexthingy" "complexthingy2"]
+      ;       }
+      ;     }
+      ;   }
+      ; }
     }
   }
 }
