@@ -52,7 +52,8 @@
 
 (defn store-create-thing [store description]
   (let [k (int (inc (apply max (keys @thingstore))))]
-    (swap! thingstore assoc k {:lookup k :description description})))
+    (swap! thingstore assoc k {:lookup k :description description})
+    (str "/things/" k)))
 
 (defn store-edit-thing [store id description]
   (if (@thingstore id)
@@ -100,6 +101,8 @@
         rs (assoc rsp :status s)]
     (if body (assoc rs :body (jsn/generate-string body)) rs)))
 
+(defn post-rsp [id] {:status 201 :headers {"Location" id}})
+
 (defn token-rsp [service] (println "token get") (default-rsp (token service)))
 
 (defn things-rsp
@@ -117,7 +120,7 @@
 (defn thing-create-rsp [service req]
   (println "things post")
   (let [desc (jsn/parse-string (slurp (:body req)))]
-    (default-rsp (thing-create service (desc "description")))))
+    (post-rsp (thing-create service (desc "description")))))
 
 (defn thing-edit-rsp [service {:keys [params] :as req}]
   (println "thing edit")
