@@ -95,27 +95,28 @@
 ;; Server
 ;; =============================================================================
 
-(defn default-rsp [body]
+(defn default-rsp [method body]
   (let [rsp {:headers {"Content-Type" "application/json"}}
-        s (if body 200 404)
+        m (if (some #{:put :delete} [method]) 204 200)
+        s (if body m 404)
         rs (assoc rsp :status s)]
     (if body (assoc rs :body (jsn/generate-string body)) rs)))
 
 (defn post-rsp [id] {:status 201 :headers {"Location" id}})
 
-(defn token-rsp [service] (println "token get") (default-rsp (token service)))
+(defn token-rsp [service] (println "token get") (default-rsp :get (token service)))
 
 (defn things-rsp
   "Get all things or lookup a thing with a request parameter."
   [service {:keys [params]}]
   (println "things get all or with request param filter")
   (if (empty? params)
-    (default-rsp (things service))
-    (default-rsp (thing-by-lookup service (int-> (:lookup params))))))
+    (default-rsp :get (things service))
+    (default-rsp :get (thing-by-lookup service (int-> (:lookup params))))))
 
 (defn thing-*-rsp [service {:keys [params]}]
   (println "thing wildcard get")
-  (default-rsp (thing-* service (int-> (:id params)))))
+  (default-rsp :get (thing-* service (int-> (:id params)))))
 
 (defn thing-create-rsp [service req]
   (println "things post")
@@ -125,11 +126,11 @@
 (defn thing-edit-rsp [service {:keys [params] :as req}]
   (println "thing edit")
   (let [desc (jsn/parse-string (slurp (:body req)))]
-    (default-rsp (thing-edit service (int-> (:id params)) (desc "description")))))
+    (default-rsp :put (thing-edit service (int-> (:id params)) (desc "description")))))
 
 (defn thing-delete-rsp [service {:keys [params]}]
   (println "thing delete")
-  (default-rsp (thing-delete service (int-> (:id params)))))
+  (default-rsp :delete (thing-delete service (int-> (:id params)))))
 
 (defn myroutes [service]
   (routes
