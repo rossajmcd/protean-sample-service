@@ -114,6 +114,14 @@
     (default-rsp :get (things service))
     (default-rsp :get (thing-by-lookup service (int-> (:lookup params))))))
 
+(defn things-json-rsp
+  "Get all things or lookup with a faux json request parameter."
+  [service {:keys [params]}]
+  (if (empty? params)
+    (default-rsp :get (things service))
+    (let [q (jsn/parse-string (:q params))]
+      (default-rsp :get (thing-by-lookup service (q "lookup"))))))
+
 (defn thing-*-rsp [service {:keys [params]}]
   (println "thing wildcard get")
   (default-rsp :get (thing-* service (int-> (:id params)))))
@@ -134,12 +142,13 @@
 
 (defn myroutes [service]
   (routes
-    (GET    "/sampleservice/token"      []  (token-rsp service))
-    (GET    "/sampleservice/things"     req (things-rsp service req))
-    (GET    "/sampleservice/things/:id" req (thing-*-rsp service req))
-    (POST   "/sampleservice/things"     req (thing-create-rsp service req))
-    (PUT    "/sampleservice/things/:id" req (thing-edit-rsp service req))
-    (DELETE "/sampleservice/things/:id" req (thing-delete-rsp service req))))
+    (GET    "/sampleservice/token"       []  (token-rsp service))
+    (GET    "/sampleservice/things"      req (things-rsp service req))
+    (GET    "/sampleservice/things-json" req (things-json-rsp service req))
+    (GET    "/sampleservice/things/:id"  req (thing-*-rsp service req))
+    (POST   "/sampleservice/things"      req (thing-create-rsp service req))
+    (PUT    "/sampleservice/things/:id"  req (thing-edit-rsp service req))
+    (DELETE "/sampleservice/things/:id"  req (thing-delete-rsp service req))))
 
 (defrecord Server [port]
   component/Lifecycle
