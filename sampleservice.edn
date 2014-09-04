@@ -97,21 +97,22 @@
         }
       }
 
-      ; ;demonstrates a json query parameter (diverse API)
-      ; ;curl -i http://host:port/path/hubs?q='\{"hmac":"AAAAAA"\}'
-      ; "complexthings" {
-      ;   :get {
-      ;     :doc "Get complexthings all or filter restricted by query param"
-      ;     :req {
-      ;       :headers {"Authorization" "psv+Bearer token"}
-      ;       :rsp {
-      ;         :success-code 200
-      ;         ; N.B. here we simulate the all complexthings response types
-      ;         :body ["complexthingy" "complexthingy2"]
-      ;       }
-      ;     }
-      ;   }
-      ; }
+      "things-json" {
+        :get {
+          :doc "Get things all or filter restricted by jsn query param"
+          :req {
+            :headers {"Authorization" "psv+Bearer token"}
+            :query-params {:required {"q" {"lookup" "things/psv+"}}}
+            :query-params-type :json
+            :gen {"lookup" {:type "Int"}}
+          }
+          :rsp {
+            :success-code 200
+            ; N.B. here we simulate the all complexthings response types
+            :body ["complexthingy" "complexthingy2"]
+          }
+        }
+      }
     }
   }
 }
