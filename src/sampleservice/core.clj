@@ -47,8 +47,10 @@
 (defn store-thing [store id] (:description (@thingstore id)))
 
 (defn store-thing-by-lookup [store lookup]
-  (conj '()
-    (:description (first (filter #(= (:lookup %) lookup) (vals @thingstore))))))
+  (if-let [v (:description (first (filter #(= (:lookup %) lookup) (vals @thingstore))))]
+    (conj '() v)
+    nil))
+
 
 (defn store-create-thing [store description]
   (let [k (int (inc (apply max (keys @thingstore))))]
@@ -117,6 +119,7 @@
 (defn things-json-rsp
   "Get all things or lookup with a faux json request parameter."
   [service {:keys [params]}]
+  (println "things-json")
   (if (empty? params)
     (default-rsp :get (things service))
     (let [q (jsn/parse-string (:q params))]
