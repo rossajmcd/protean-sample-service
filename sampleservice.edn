@@ -54,10 +54,10 @@
           :doc "Get things via mandatory standard request parameter"
           :req {
             :headers {"Authorization" "psv+Bearer token"}
-            :query-params {:required {"lookup" "things/psv+"}}
+            :query-params {:required {"lookup" "things/psv+"} :optional {"flibble" "psv+flibble"}}
             ;; the below is optional [standard|json] - defaults to standard
             ;;:query-params-type :standard
-            :gen {"lookup" {:type "Int"}}
+            :gen {"lookup" {:type "Int"} "flibble" {:type "String"}}
           }
           :rsp {
             :success-code 200
