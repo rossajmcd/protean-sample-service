@@ -80,7 +80,7 @@
           }
           :rsp {
             :success-code 200
-            :content-type "text/plain"
+            :headers {"Content-Type" "text/plain"}
             :body "thingy"
             :errors {:status [401 404] :probability 0}
           }
