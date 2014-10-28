@@ -21,7 +21,6 @@
         :get {
           :doc "Get thing(s) via optional filter/query request parameter"
           :req {
-            :headers {"Authorization" "psv+Bearer token"}
             :query-params {:optional {"lookup" "psv+lookup"}}
             ;; the below is optional [standard|json] - defaults to standard
             ;;:query-params-type :standard
@@ -37,7 +36,6 @@
         :post {
           :doc "Create a thing"
           :req {
-            :headers {"Authorization" "psv+Bearer token"}
             :body {"description" "psv+description"}
             :gen {"description" {:type "String"}}
           }
@@ -53,7 +51,6 @@
         :get {
           :doc "Get things via mandatory standard request parameter"
           :req {
-            :headers {"Authorization" "psv+Bearer token"}
             :query-params {:required {"lookup" "things/psv+"} :optional {"flibble" "psv+flibble"}}
             ;; the below is optional [standard|json] - defaults to standard
             ;;:query-params-type :standard
@@ -70,10 +67,7 @@
       "things/*" {
         :get {
           :doc "Get a thing with an id *"
-          :req {
-            :headers {"Authorization" "psv+Bearer token"}
-            :gen {"things/psv+" {:type "Int"}}
-          }
+          :req {:gen {"things/psv+" {:type "Int"}}}
           :rsp {
             :headers {"Content-Type" "text/plain"}
             :body "thingy"
@@ -84,7 +78,6 @@
         :put {
           :doc "Edit a thing with an id *"
           :req {
-            :headers {"Authorization" "psv+Bearer token"}
             :body {"description" "psv+description"}
             :gen {"things/psv+" {:type "Int"} "description" {:type "String"}}
           }
@@ -93,10 +86,7 @@
 
         :delete {
           :doc "Delete a thing with an id *"
-          :req {
-            :headers {"Authorization" "psv+Bearer token"}
-            :gen {"things/psv+" {:type "Int"}}
-          }
+          :req {:gen {"things/psv+" {:type "Int"}}}
           :rsp {:errors {:status [401 404] :probability 0}}
         }
       }
@@ -105,7 +95,6 @@
         :get {
           :doc "Get things all or filter restricted by jsn query param"
           :req {
-            :headers {"Authorization" "psv+Bearer token"}
             :query-params {:required {"q" {"lookup" "things/psv+"}}}
             :query-params-type :json
             :gen {"lookup" {:type "Int"}}
@@ -118,5 +107,8 @@
         }
       }
     }
+
+    ;; shared content
+    :req {:headers {"Authorization" "psv+Bearer token"}}
   }
 }
