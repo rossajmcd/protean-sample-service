@@ -10,7 +10,6 @@
         :get {
           :doc "Get an auth token"
           :rsp {
-            :success-code 200
             :body-res "access_token"
             :body {"access_token" "mytoken" "token_type" "bearer"}
             :errors {:status [401 409] :probability 0}
@@ -29,7 +28,6 @@
             :gen {"lookup" {:type "Int"}}
           }
           :rsp {
-            :success-code 200
             ; N.B. here we simulate the all things response types
             :body ["thingy" "thingy2"]
             :errors {:status [401] :probability 0}
@@ -44,7 +42,6 @@
             :gen {"description" {:type "String"}}
           }
           :rsp {
-            :success-code 201
             :status 201
             :headers {"Location" "/things/1"}
             :errors {:status [401 409] :probability 0}
@@ -63,7 +60,6 @@
             :gen {"lookup" {:type "Int"} "flibble" {:type "String"}}
           }
           :rsp {
-            :success-code 200
             ; N.B. here we simulate the all things response types
             :body ["thingy" "thingy2"]
             :errors {:status [401 404] :probability 0}
@@ -79,7 +75,6 @@
             :gen {"things/psv+" {:type "Int"}}
           }
           :rsp {
-            :success-code 200
             :headers {"Content-Type" "text/plain"}
             :body "thingy"
             :errors {:status [401 404] :probability 0}
@@ -93,10 +88,7 @@
             :body {"description" "psv+description"}
             :gen {"things/psv+" {:type "Int"} "description" {:type "String"}}
           }
-          :rsp {
-            :success-code 204
-            :errors {:status [401 404] :probability 0}
-          }
+          :rsp {:errors {:status [401 404] :probability 0}}
         }
 
         :delete {
@@ -105,10 +97,7 @@
             :headers {"Authorization" "psv+Bearer token"}
             :gen {"things/psv+" {:type "Int"}}
           }
-          :rsp {
-            :success-code 204
-            :errors {:status [401 404] :probability 0}
-          }
+          :rsp {:errors {:status [401 404] :probability 0}}
         }
       }
 
@@ -122,7 +111,6 @@
             :gen {"lookup" {:type "Int"}}
           }
           :rsp {
-            :success-code 200
             ; N.B. here we simulate the all complexthings response types
             :body ["complexthingy" "complexthingy2"]
             :errors {:status [401 404] :probability 0}
