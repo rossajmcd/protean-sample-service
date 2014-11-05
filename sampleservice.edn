@@ -47,23 +47,6 @@
         }
       }
 
-      "things-standard-query-param" {
-        :get {
-          :doc "Get things via mandatory standard request parameter"
-          :req {
-            :query-params {:required {"lookup" "things/psv+"} :optional {"flibble" "psv+flibble"}}
-            ;; the below is optional [standard|json] - defaults to standard
-            ;;:query-params-type :standard
-            :gen {"lookup" {:type "Int"} "flibble" {:type "String"}}
-          }
-          :rsp {
-            ; N.B. here we simulate the all things response types
-            :body ["thingy" "thingy2"]
-            :errors {:status [401 404] :probability 0}
-          }
-        }
-      }
-
       "things/*" {
         :get {
           :doc "Get a thing with an id *"
