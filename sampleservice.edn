@@ -24,7 +24,7 @@
             :query-params {:optional {"lookup" "psv+lookup"}}
             ;; the below is optional [standard|json] - defaults to standard
             ;;:query-params-type :standard
-            :gen {"lookup" {:type "Int"}}
+            :format {"lookup" {:type :Int}}
           }
           :rsp {
             ; N.B. here we simulate the all things response types
@@ -37,7 +37,7 @@
           :doc "Create a thing"
           :req {
             :body {"description" "psv+description"}
-            :gen {"description" {:type "String"}}
+            :format {"description" {:type :String}}
           }
           :rsp {
             :status 201
@@ -50,7 +50,7 @@
       "things/*" {
         :get {
           :doc "Get a thing with an id *"
-          :req {:gen {"things/psv+" {:type "Int"}}}
+          :req {:format {"things/psv+" {:type :Int}}}
           :rsp {
             :headers {"Content-Type" "text/plain"}
             :body "thingy"
@@ -62,14 +62,14 @@
           :doc "Edit a thing with an id *"
           :req {
             :body {"description" "psv+description"}
-            :gen {"things/psv+" {:type "Int"} "description" {:type "String"}}
+            :format {"things/psv+" {:type :Int} "description" {:type :String}}
           }
           :rsp {:errors {:status [401 404] :probability 0}}
         }
 
         :delete {
           :doc "Delete a thing with an id *"
-          :req {:gen {"things/psv+" {:type "Int"}}}
+          :req {:format {"things/psv+" {:type :Int}}}
           :rsp {:errors {:status [401 404] :probability 0}}
         }
       }
@@ -80,7 +80,7 @@
           :req {
             :query-params {:required {"q" {"lookup" "things/psv+"}}}
             :query-params-type :json
-            :gen {"lookup" {:type "Int"}}
+            :format {"lookup" {:type :Int}}
           }
           :rsp {
             ; N.B. here we simulate the all complexthings response types
