@@ -1,92 +1,100 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Protean integration test reference codex
 ;;
 ;; Models a simple RESTful API for simulation,
 ;; simulation testing and integration testing.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 {
-  :sampleservice {
-    :paths {
-      "token" {
-        :get {
-          :doc "Get an auth token"
-          :rsp {
-            :body-res "access_token"
-            :body {"access_token" "mytoken" "token_type" "bearer"}
-            :errors {:status [401 409] :probability 0}
-          }
+
+  ;; Services
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  "sampleservice" {
+
+    ;; Endpoints
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    "token" {
+      :get {
+        :doc "Get an auth token"
+        :rsp {
+          :body-res "access_token"
+          :body {"access_token" "mytoken" "token_type" "bearer"}
+          :errors {:status [401 409] :probability 0}
+        }
+      }
+    }
+
+    "things" {
+      :get {
+        :doc "Get thing(s) via optional filter/query request parameter"
+        :req {
+          :query-params {:optional {"lookup" "psv+lookup"}}
+          ;; the below is optional [standard|json] - defaults to standard
+          ;;:query-params-type :standard
+          :format {"lookup" {:type :Int}}
+        }
+        :rsp {
+          ; N.B. here we simulate the all things response types
+          :body ["thingy" "thingy2"]
+          :errors {:status [401] :probability 0}
         }
       }
 
-      "things" {
-        :get {
-          :doc "Get thing(s) via optional filter/query request parameter"
-          :req {
-            :query-params {:optional {"lookup" "psv+lookup"}}
-            ;; the below is optional [standard|json] - defaults to standard
-            ;;:query-params-type :standard
-            :format {"lookup" {:type :Int}}
-          }
-          :rsp {
-            ; N.B. here we simulate the all things response types
-            :body ["thingy" "thingy2"]
-            :errors {:status [401] :probability 0}
-          }
+      :post {
+        :doc "Create a thing"
+        :req {
+          :body {"description" "psv+description"}
+          :format {"description" {:type :String}}
         }
+        :rsp {
+          :status 201
+          :headers {"Location" "/things/1"}
+          :errors {:status [401 409] :probability 0}
+        }
+      }
+    }
 
-        :post {
-          :doc "Create a thing"
-          :req {
-            :body {"description" "psv+description"}
-            :format {"description" {:type :String}}
-          }
-          :rsp {
-            :status 201
-            :headers {"Location" "/things/1"}
-            :errors {:status [401 409] :probability 0}
-          }
+    "things/*" {
+      :get {
+        :doc "Get a thing with an id *"
+        :req {:format {"things/psv+" {:type :Int}}}
+        :rsp {
+          :headers {"Content-Type" "text/plain"}
+          :body "thingy"
+          :errors {:status [401 404] :probability 0}
         }
       }
 
-      "things/*" {
-        :get {
-          :doc "Get a thing with an id *"
-          :req {:format {"things/psv+" {:type :Int}}}
-          :rsp {
-            :headers {"Content-Type" "text/plain"}
-            :body "thingy"
-            :errors {:status [401 404] :probability 0}
-          }
+      :put {
+        :doc "Edit a thing with an id *"
+        :req {
+          :body {"description" "psv+description"}
+          :format {"things/psv+" {:type :Int} "description" {:type :String}}
         }
-
-        :put {
-          :doc "Edit a thing with an id *"
-          :req {
-            :body {"description" "psv+description"}
-            :format {"things/psv+" {:type :Int} "description" {:type :String}}
-          }
-          :rsp {:errors {:status [401 404] :probability 0}}
-        }
-
-        :delete {
-          :doc "Delete a thing with an id *"
-          :req {:format {"things/psv+" {:type :Int}}}
-          :rsp {:errors {:status [401 404] :probability 0}}
-        }
+        :rsp {:errors {:status [401 404] :probability 0}}
       }
 
-      "things-json" {
-        :get {
-          :doc "Get things all or filter restricted by jsn query param"
-          :req {
-            :query-params {:required {"q" {"lookup" "things/psv+"}}}
-            :query-params-type :json
-            :format {"lookup" {:type :Int}}
-          }
-          :rsp {
-            ; N.B. here we simulate the all complexthings response types
-            :body ["complexthingy" "complexthingy2"]
-            :errors {:status [401 404] :probability 0}
-          }
+      :delete {
+        :doc "Delete a thing with an id *"
+        :req {:format {"things/psv+" {:type :Int}}}
+        :rsp {:errors {:status [401 404] :probability 0}}
+      }
+    }
+
+    "things-json" {
+      :get {
+        :doc "Get things all or filter restricted by jsn query param"
+        :req {
+          :query-params {:required {"q" {"lookup" "things/psv+"}}}
+          :query-params-type :json
+          :format {"lookup" {:type :Int}}
+        }
+        :rsp {
+          ; N.B. here we simulate the all complexthings response types
+          :body ["complexthingy" "complexthingy2"]
+          :errors {:status [401 404] :probability 0}
         }
       }
     }
